@@ -1,0 +1,32 @@
+{% extends 'hrms/layout.html' %}
+{% load static %}
+{% block page_title %}
+Edit Holiday
+{% endblock %}
+
+{%block content%}
+<div class="content">
+    <div class="container-fluid">
+        <div class="card animated fadeInUp">
+            <div class="card-body">
+                <form method="post">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <label>Date</label>
+                        <label>
+                            <input class="form-control" type="date" name="date" value={{holiday.date.isoformat}} required/>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <label>
+                            <input class="form-control" type="text" name="name" value={{holiday.name}} required/>
+                        </label>
+                    </div>
+                    <input type="submit" value="submit" class="btn btn-danger"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

@@ -1,0 +1,107 @@
+{% extends 'hrms/layout.html' %}
+{% load static %}
+{% block page_title %}
+Manage Holidays
+
+<script>
+$(document).ready(function(){
+  $("#search_input").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#holidays tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+{% endblock %}
+
+{%block content%}
+<div class="content">
+    <div class="container-fluid">
+        <button class="btn btn-danger" data-toggle="modal"
+                data-target="#modal_create_holiday">Create a public holiday
+        </button>
+        <div class="card animated fadeInUp">
+            <div class="card-body">
+
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {%if holidays%}
+                <h3>Holidays</h3>
+                <div>
+                    <div class="form-group "> 
+                                <i class="fas fa-search " aria-hidden="true"></i>
+                                <input id="search_input" type="text" class="form-control" placeholder="Search....">                      
+                            </div>
+                    <table class="table">
+                        <thead class="thead-dark">
+                        <th>Date</th>
+                        <th>Name</th>
+                        <th>Actions</th>
+                        </thead>
+                        <tbody id="holidays">
+                        {%for holiday in holidays%}
+                        <tr>
+                            <td>{{holiday.date}}</td>
+                            <td>{{holiday.name}}</td>
+                            <td><a href="{%url 'hrms:edit_holiday_page' holiday.id%}">
+                                <button>Edit</button>
+
+                            </a> | <a href="{%url 'hrms:delete_holiday' holiday.id%}">
+                                <button>Delete</button>
+                            </a></td>
+
+                        </tr>
+                        {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+                {%else%}
+                <h3>No Holidays Available</h3>
+                {%endif%}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: modalApplyOvertime -->
+<div class="modal fade" id="modal_create_holiday" tabindex="-1" role="dialog"
+     aria-hidden="true" style="overflow-y: auto !important">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Create Holiday</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="modal-body">
+                <form method="post">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <label>Date</label>
+                        <label>
+                            <input class="form-control" type="date" name="date" required/>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <label>
+                            <input class="form-control" type="text" name="name" required/>
+                        </label>
+                    </div>
+                    <input type="submit" value="submit" class="btn btn-danger"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}

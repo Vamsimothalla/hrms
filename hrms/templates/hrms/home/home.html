@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href=" {% static 'hrms/css/style.css'%} ">
+    <style>
+        .body-bg{
+           background: #8a8a8a;  /* fallback for old browsers */
+
+        }
+        .btn-white{
+            background: #ffffff;  /* fallback for old browsers */
+              }
+        .btn-gray{
+            background: #6d6d6d;  /* fallback for old browsers */
+            margin: 10px;
+        }
+        .coll-lg-6 {
+    flex: 0 0 100%;
+    max-width: 100%; }
+    </style>
+    <title>Home</title>
+</head>
+<body class='body-bg'>
+    <section class="container">
+        <nav class="navbar navbar-light bg-light mt-3 mb-2 ">
+            <h1 class="display-4 mt-2 text-right text-warning">  </h1>
+            <a href=" {% url 'hrms:recruitment' %} " class="btn  btn-gray text-light"> We are Hiring !!! </a>  &emsp; &emsp; &emsp; &emsp; <a href=" {% url 'hrms:login' %} " class="btn btn-gray text-light"> Administrator &rarr; </a>
+        </nav>
+        
+        <div class="row">
+
+            <div class="coll-lg-6">
+                <div class="card mb-3 shadow">
+                    <div class="card-header btn-white pt-4">
+                        <p class="lead">Company Introduction</p>
+                    </div>
+
+                    <div class="card-body">
+                        <p class="lead text-justify">
+                            The Human resource management is the strategic approach to the effective management of people in a company or organization such that they help their business gain a competitive advantage. It is designed to maximize employee performance in service of an employer's strategic objectives. 
+                        </p><hr>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
