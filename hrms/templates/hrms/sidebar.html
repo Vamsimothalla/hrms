@@ -70,16 +70,22 @@
 
 
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'hrms:recruitmentall' %}">
+            <a class="nav-link" href="{% url 'hrms:manage_job_advertisement_page' %}">
               <i class="fa fa-database"></i>
               <span class="menu-title">&emsp;Recruitment</span>
+            </a>
+          </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'hrms:view_job_applications_page' %}">
+              <i class="fa fa-database"></i>
+              <span class="menu-title">&emsp;View Job Applications</span>
             </a>
           </li>
 
           <li class="nav-item">
             <a class="nav-link" href="{% url 'hrms:payroll' %}">
               <i class="fa fa-usd"></i>
-              <span class="menu-title">&emsp;Payroll</span>
+              <span class="menu-title">&emsp;Leave</span>
             </a>
           </li>
 

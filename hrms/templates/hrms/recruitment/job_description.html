@@ -1,0 +1,128 @@
+{% load static %}
+{%block page_title %}
+Job Advertisement
+{%endblock%}
+
+{%block content%}
+    <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <link rel="stylesheet" href="{% static 'hrms/vendors/iconfonts/mdi/css/materialdesignicons.min.css' %} ">
+  <link rel="stylesheet" href="{% static 'hrms/vendors/iconfonts/font-awesome/css/font-awesome.css' %} ">
+  <link rel="stylesheet" href=" {% static 'hrms/css/style.css'%} ">
+  <link rel="stylesheet" href="{% static 'hrms/css/toastr.min.css' %}">
+  <link rel="shortcut icon" href="{% static 'hrms/images/favicon.png' %}" />
+  <title>Recruitment Page</title>
+</head>
+<body>
+<div class="content">
+    <div class="container-fluid">
+        <div class="card animated fadeInUp">
+            <div class="card-body">
+                <h3>{{job_advertisement.position}}</h3>
+                <i class="fa fa-calendar"></i>
+                <span> Post Date: {{job_advertisement.post_date}}</span>
+                &nbsp; &nbsp; &nbsp;
+                <i style="color:red" class="fa fa-calendar"></i>
+                <span style="color:red">Deadline: {{job_advertisement.deadline  }}  </span>
+
+                &nbsp; &nbsp; &nbsp;
+                <i class="fa fa-user"></i>
+                <span>Applications: {{job_advertisement.number_of_applications}}  </span>
+
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card animated fadeInUp">
+                    <div class="card-body">
+                        <div class="card-body">
+
+                            {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-warning">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ message }}</div>
+                            {% endfor %}
+                            {% endif %}
+                            <h3>Description</h3>
+                            <h4>Position</h4>
+                            <div>
+                                {{job_advertisement.position.description}}
+                            </div>
+                            <h4>Job</h4>
+                            <div>
+                                 {{job_advertisement.description}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card animated fadeInUp">
+                    <div class="card-body">
+                        <div class="card-body">
+                            <button class="btn btn-primary" data-toggle="modal"
+                                    data-target="#modal_apply_for_job">Apply for this job</button>
+                            <div>
+                                <p><i class="fa fa-hard-hat"></i>&nbsp; Job Type: {{job_advertisement.position.type}}</p>
+                                <p><i class="fa fa-dollar-sign"></i>&nbsp; Salary: {{job_advertisement.position.currency}} {{job_advertisement.position.salary}}</p>
+                                <p><i class="fa fa-briefcase"></i> &nbsp; Experience(Years): {{job_advertisement.experience}} </p>
+                                <p><i class="fa fa-user-plus"></i>&nbsp; Vacancy: {{job_advertisement.vacancy}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: modalApplyOvertime -->
+<div class="modal fade" id="modal_apply_for_job" tabindex="-1" role="dialog"
+     aria-hidden="true" style="overflow-y: auto !important">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Upload CV</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <!-- Body -->
+            <section class="container1">
+    <div class="row mt-5">
+      <div class="col-lg-8 offset-lg-2">
+      <div class="text-center mb-2">
+        <img src=" {% static 'hrms/images/logo.png' %} " alt="">
+      </div>
+        <p class="lead text-center">Candidate Application Form</p><hr>
+        <div class="card">
+          <div class="card-body">
+           <form action="" method="POST" class="form-group">
+                    {%csrf_token%}
+                    {{job_application_form}}
+                    <input type="submit" value="Upload" class="btn btn-danger"/>
+                </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+        </div>
+    </div>
+</div>
+</body>
+    <script src="{% static 'hrms/vendors/js/vendor.bundle.base.js' %}"></script>
+  <script src="{% static 'hrms/vendors/js/vendor.bundle.addons.js' %}"></script>
+  <script src="{% static 'hrms/js/toastr.min.js' %}"></script>
+  <script src="{% static 'hrms/js/sweetalert2@8.js' %}"></script>
+  <script src="{% static 'hrms/js/pay.js' %}"></script>
+</html>
+{%endblock%}
+

@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
-from .models import Employee, Department, Attendance, Leave, Recruitment
+from django.forms import ModelForm
+
+from .models import Employee, Department, Attendance, Leave, Recruitment, JobApplication
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
 from django.core import validators
@@ -48,14 +50,14 @@ class EmployeeForm(forms.ModelForm):
     class Meta:
         model = Employee
         fields = (
-        'first_name', 'last_name', 'mobile', 'email', 'emergency', 'salary', 'gender', 'department', 'bank', 'number',
-        'language', 'thumb')
+            'first_name', 'last_name', 'mobile', 'email', 'emergency', 'salary', 'gender', 'department', 'bank',
+            'number',
+            'language', 'thumb')
         widgets = {
             'salary': forms.TextInput(attrs={'class': 'form-control'}),
             'bank': forms.TextInput(attrs={'class': 'form-control'}),
             'number': forms.TextInput(attrs={'class': 'form-control'})
         }
-
 
 
 class DepartmentForm(forms.ModelForm):
@@ -95,6 +97,7 @@ class LeaveForm(forms.ModelForm):
 
 class RecruitmentForm(forms.ModelForm):
     position = forms.ModelChoiceField(Department.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+
     class Meta:
         model = Recruitment
         fields = '__all__'
@@ -104,3 +107,10 @@ class RecruitmentForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'phone': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+
+class JobApplicationForm(ModelForm):
+
+    class Meta:
+        model = JobApplication
+        fields =['first_name','last_name',"email",'phone','cv']

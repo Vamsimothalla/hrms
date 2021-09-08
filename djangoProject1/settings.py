@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-ch468dgg#wwuppu*m3=g!v2(=$+7wyjpk@nkumbt*f_d$+%pd-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ec2-18-119-116-91.us-east-2.compute.amazonaws.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -63,7 +63,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'hrms.context_processors.get_departments'
+                'hrms.context_processors.get_departments',
+                'hrms.context_processors.get_leaves',
             ],
         },
     },

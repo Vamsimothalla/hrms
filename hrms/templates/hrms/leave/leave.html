@@ -1,0 +1,275 @@
+{% extends 'hrms/emp_layout.html' %}
+
+{% load static %}
+
+
+
+{% block page_title %}Apply for Leave{% endblock %}
+
+{%block content%}
+<div class="content">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-profile">
+
+                    <div class="card-body">
+                        <!-- Status Flash Messages -->
+                        {% if messages %}
+                        {% for msg in messages%}
+                        <div class="alert alert-{{ msg.tags }} alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                &times;
+                            </button>
+                            {{ msg }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+
+                        {% if leave_balance == -1%}
+                        <h2> You Don't have Leave Records for this Year</h2>
+                        {% else %}
+
+                        <button class="btn btn-outline-primary" data-toggle="modal" data-target="#modal_apply_leave">
+                            Apply Now
+                        </button>
+
+                        <h3>Your Applications</h3>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <th>Date</th>
+                                <th>Duration</th>
+                                <th>HR status</th>
+
+                                <th colspan="2">#</th>
+                                </thead>apps
+                                {% for leave_application in apps %}
+                                <tr>
+                                    <td>{{leave_application.apply_date}}</td>
+
+                                    <td>{{leave_application.no_of_days}}</td>
+
+
+                                    <td>
+                                        {% if leave_application.hr_status == "Approved"%}
+                                        <i class="large material-icons">Approved</i>
+                                        {% elif leave_application.hr_status == "Rejected"%}
+                                        <i class="large material-icons">Rejected</i>
+                                        {% else%}
+                                        <i class="large material-icons">Pending</i>
+                                        {% endif%}
+                                    </td>
+
+
+                                    <td>
+
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: modalApplyLeave -->
+<div class="modal fade" id="modal_apply_leave" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true" style="overflow-y: auto !important">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- Header -->
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Leave Application</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <form method="POST" action="{% url 'hrms:apply_leave' %}"> {% csrf_token %}
+
+                    <div class="form-group">
+                        <input type="number" class="form-control" placeholder="No. of Days"
+                               id = "no_days" name="no_days" >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="start_date">Start Date</label>
+                        <input type="date" class="form-control" placeholder="From" name="s_date"
+                               id="st_date" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">End Date</label>
+                        <input type="date" class="form-control" placeholder="To" id="end_date"
+                               name="e_date" required >
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Additional Note"
+                               name="remark">
+                    </div>
+
+                    <!--Footer-->
+                    <div class="modal-footer">
+                        <button class="btn btn-danger" type="submit">Apply</button>
+                        <button class="btn btn-outline-danger" class="close" data-dismiss="modal" aria-label="Close">
+                            Close
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{%endblock%}
+{%block custom_js%}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script >$(document).ready(() => {
+    // Getting number of days for a given leave type
+    $("#leave_type").change(() => {
+        leave_type = document.querySelector('#leave_type').value;
+
+        console.log(leave_type)
+        $.ajax({
+            type: 'get',
+            url: configuration['leave']['get_no_of_days'],
+            data: { 'leave_type': leave_type },
+            dataType: 'json',
+            success: (data) => {
+                if (data.success) {
+                    document.querySelector('#no_days').value = data.no_of_days;
+                    if (data.leave == "Annual") {
+                        document.querySelector('#no_days').readOnly = false;
+                    } else {
+                        document.querySelector('#no_days').readOnly = true;
+                    }
+                } else {}
+            },
+
+        });
+    });
+
+    // Getting Leave End date
+    $("#st_date").change(() => {
+        start_date = document.querySelector('#st_date').value;
+        no_days = document.querySelector('#no_days').value;
+
+        $.ajax({
+            type: 'get',
+            url: configuration['leave']['get_end_date'],
+            data: { 'startDate': start_date, 'no_of_days': no_days },
+            dataType: 'json',
+            success: (data) => {
+                if (data.success) {
+                    document.querySelector('#end_date').value = data.end_date;
+                } else {
+                    // alert(data.message);
+                }
+
+            },
+
+        });
+    });
+
+    // Approving/rejecting Leave Application
+    $("#submit_leave_application").click(() => {
+        var selected = $("#select_action :selected").text();
+        application_id = document.querySelector('#application_id').value;
+
+        switch (selected) {
+            case "Approve":
+                var form_data = $("#leave_form").serialize();
+
+                $.ajax({
+                    type: 'POST',
+                    url: configuration['leave']['approve_leave'],
+                    data: form_data,
+                    dataType: 'json',
+                    success: (data) => {
+                        window.location.href = configuration['leave']['leave_dashboard_page'];
+                    }
+                });
+                break;
+            case "Reject":
+                var form_data = $("#leave_form").serialize();
+
+                $.ajax({
+                    type: 'POST',
+                    url: configuration['leave']['reject_leave'],
+                    data: form_data,
+                    dataType: 'json',
+                    success: (data) => {
+                        window.location.href = configuration['leave']['leave_dashboard_page'];
+                    }
+                });
+                break;
+            default:
+        }
+    })
+
+    // Editing Leave application
+    $("#edit_leave_btn").click(() => {
+        var form_data = $("#edit_leave_form").serialize();
+        $.ajax({
+            type: 'POST',
+            url: configuration['leave']['edit_leave_application'],
+            data: form_data,
+            dataType: 'json',
+            success: (data) => {
+                window.location.href = configuration['leave']['apply_leave_page'];
+            }
+        });
+    })
+
+    // Deleting Leave application
+    $("#delete_leave_btn").click(() => {
+        $.ajax({
+            type: 'POST',
+            url: configuration['leave']['delete_leave_application'],
+            data: form_data,
+            dataType: 'json',
+            success: (data) => {
+                window.location.href = configuration['leave']['apply_leave_page'];
+            }
+        });
+    })
+
+    // Save Employee Contact
+    $("#contact_submit").click(() => {
+        var form_data = $("#contact_form").serialize();
+        $.ajax({
+            type: 'POST',
+            url: configuration['employees']['add_employee_contacts'],
+            data: form_data,
+            dataType: 'json',
+            success: (data) => {
+                location.reload();
+            }
+        });
+    })
+
+    // Delete Employee Contact
+    $("#contact_delete").click(() => {
+        var contact_id = document.querySelector('#contact_id').value;
+        $.ajax({
+            type: 'get',
+            url: configuration['employees']['delete_employee_contact'],
+            data: { "contact_id": contact_id },
+            dataType: 'json',
+            success: (data) => {
+                location.reload();
+            }
+        });
+    })
+});</script>
+
+
+{%endblock%}
