@@ -7,10 +7,6 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.dateparse import parse_datetime
 
 
-class User(AbstractUser):
-    thumb = models.ImageField()
-
-
 # Create your models here.
 class Department(models.Model):
     name = models.CharField(max_length=70, null=False, blank=False)
@@ -49,6 +45,10 @@ class Employee(models.Model):
         return reverse("hrms:employee_view", kwargs={"pk": self.pk})
 
 
+class User(AbstractUser):
+    thumb = models.ImageField()
+
+
 class Attendance(models.Model):
     STATUS = (('PRESENT', 'PRESENT'), ('ABSENT', 'ABSENT'), ('UNAVAILABLE', 'UNAVAILABLE'))
     date = models.DateField(auto_now_add=True)
@@ -72,8 +72,18 @@ class Leave(models.Model):
     end = models.CharField(blank=False, max_length=15)
     status = models.CharField(choices=STATUS, default='Not Approved', max_length=15)
 
-    def __str__(self):
-        return self.employee + ' ' + self.start
+
+
+
+class LeaveApplication(models.Model):
+    name = models.CharField(max_length=25)
+    email = models.EmailField()
+    apply_date = models.DateField(auto_now=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    no_of_days = models.IntegerField(default=1)
+    hr_status = models.CharField(max_length=15, default="Pending")
+    hr_comment = models.TextField(blank=True, null=True, default="None")
 
 
 class Recruitment(models.Model):
@@ -179,6 +189,7 @@ class TestCronJob(models.Model):
     def __str__(self):
         return f'{self.task}'
 
+
 def create_holiday(date, name):
     holiday = Holiday.objects.create(
         date=date,
@@ -186,6 +197,7 @@ def create_holiday(date, name):
     )
 
     return holiday
+
 
 def is_on_holiday(date_time):
     # Check if date is a holiday
@@ -214,3 +226,31 @@ class Holiday(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class JobAdvertisement(models.Model):
+    position = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='title')
+    education = models.CharField(max_length=20)
+    vacancy = models.IntegerField()
+    experience = models.IntegerField()
+    post_date = models.DateField(auto_now=True)
+    description = models.TextField()
+    show_salary = models.BooleanField(default=True)
+    deadline = models.DateField()
+
+    def __str__(self):
+        return self.position.name
+
+    @property
+    def number_of_applications(self):
+        return self.jobapplication_set.count()
+
+
+class JobApplication(models.Model):
+    job_ad = models.ForeignKey(JobAdvertisement, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=25)
+    last_name = models.CharField(max_length=25)
+    position = models.CharField(max_length=40)
+    email = models.EmailField(max_length=25)
+    phone = models.CharField(max_length=11)
+    cv = models.FileField(upload_to='cvs/')

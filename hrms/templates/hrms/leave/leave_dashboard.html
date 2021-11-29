@@ -1,0 +1,91 @@
+{% extends 'hrms/layout.html' %}
+{% block page_title %}
+Leave Applications
+<script>
+$(document).ready(function(){
+  $("#search_input").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#leave_applications tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <!-- Status Flash Messages -->
+        {% if messages %}
+        {% for msg in messages%}
+        <div class="alert alert-{{ msg.tags }} alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                &times;
+            </button>
+            {{ msg }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="card animated fadeInUp">
+            <div class="card-body">
+                {% comment %} <input type="hidden" id="role" name="role" value="{{role}}"> {% endcomment %}
+                {% if not is_applications_available %}
+                <h3>No Pending Applications</h3>
+                {% else %}
+
+                <div class="table-responsive">
+                    <p>Approve/Reject Leave Applications As HR<p>
+                    <div class="form-group ">
+                        <i class="fas fa-search " aria-hidden="true"></i>
+                        <input id="search_input" type="text" class="form-control" placeholder="Search....">
+                    </div>
+                    <table class="table table-hover">
+                        <thead class="thead-dark">
+                        <th>Applicant</th>
+                        <th>Leave Type</th>
+                        <th>Balance</th>
+                        <th colspan=2 align="center">Action</th>
+                        </thead>
+                        <tbody id="leave_applications">
+                        {% for app in hr_applications %}
+                        <tr>
+                            <td>
+                                {{ app.employee}}<br>{{ app.start_date}} to {{ app.end_date}}
+                                <input type="hidden" id="employee_id" name="employee_id"
+                                       value="{{ app.employee.id}}">
+                            </td>
+                            <td>
+                                <input type="hidden" id="ltype" name="ltype" value="{{ app.leave_type_id}}">
+                                {{ app.leave_type}}
+                            </td>
+                            <td>{{app.balance }}</td>
+                            <td>
+                                <input type="hidden" id="app_id" name="app_id" value="{{app.id }}">
+                                <a href="{% url 'hrms:leave_application_details' app.id %}">
+                                    <button class="btn btn-outline-success btn-rounded waves-effect">
+                                        View
+                                    </button></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            {% endif%}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+<script>
+        $(document).ready(function(){
+        window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+      }, 5000);
+</script>
